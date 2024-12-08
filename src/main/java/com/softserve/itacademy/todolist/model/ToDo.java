@@ -1,18 +1,17 @@
 package com.softserve.itacademy.todolist.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
-@Getter @Setter @NoArgsConstructor
-@Entity @Table(name = "todos")
+
+@Data
+@Entity
+@Table(name = "todos")
 public class ToDo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,25 +37,4 @@ public class ToDo {
             inverseJoinColumns = @JoinColumn(name = "collaborator_id"))
     private List<User> collaborators;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        ToDo toDo = (ToDo) o;
-        return getId() != null && getId().equals(toDo.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "ToDo { " +
-               "id = " + id +
-               ", title = '" + title + '\'' +
-               ", createdAt = " + createdAt +
-               " }";
-    }
 }

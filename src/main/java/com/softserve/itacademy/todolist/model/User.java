@@ -1,5 +1,8 @@
 package com.softserve.itacademy.todolist.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,14 +10,11 @@ import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.constraints.Pattern;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
-@Getter @Setter @NoArgsConstructor
+import java.util.Collection;
+import java.util.List;
+
+@Data
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
@@ -91,28 +91,4 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        User user = (User) o;
-        return getId() != null && getId().equals(user.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "User { " +
-               "id = " + id +
-               ", firstName = '" + firstName + '\'' +
-               ", lastName = '" + lastName + '\'' +
-               ", email = '" + email + '\'' +
-               ", password = '" + password + '\'' +
-               ", role = " + role +
-               " }";
-    }
 }

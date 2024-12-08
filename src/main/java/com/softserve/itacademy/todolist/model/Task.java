@@ -1,14 +1,10 @@
 package com.softserve.itacademy.todolist.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import java.util.Objects;
-
-@Getter @Setter @NoArgsConstructor
+@Data
 @Entity
 @Table(name = "tasks")
 public class Task {
@@ -31,27 +27,5 @@ public class Task {
     @JoinColumn(name = "state_id")
     private State state;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Task task = (Task) o;
-        return getId() != null && getId().equals(task.getId());
-    }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Task { " +
-               "id = " + id +
-               ", name = '" + name + '\'' +
-               ", priority = " + priority +
-               ", todo = " + todo +
-               ", state = " + state +
-               " }";
-    }
 }
