@@ -1,4 +1,4 @@
-package com.softserve.itacademy.todolist.config.auth.authservice;
+package com.softserve.itacademy.todolist.config.auth;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

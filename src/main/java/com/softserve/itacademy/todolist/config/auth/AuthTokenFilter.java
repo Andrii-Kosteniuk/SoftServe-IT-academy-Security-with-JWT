@@ -1,4 +1,4 @@
-package com.softserve.itacademy.todolist.config.auth.authservice;
+package com.softserve.itacademy.todolist.config.auth;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

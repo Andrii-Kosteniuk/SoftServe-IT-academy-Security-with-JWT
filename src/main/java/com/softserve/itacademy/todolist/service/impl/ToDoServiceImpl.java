@@ -4,9 +4,9 @@ import com.softserve.itacademy.todolist.exception.NullEntityReferenceException;
 import com.softserve.itacademy.todolist.model.ToDo;
 import com.softserve.itacademy.todolist.repository.ToDoRepository;
 import com.softserve.itacademy.todolist.service.ToDoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
