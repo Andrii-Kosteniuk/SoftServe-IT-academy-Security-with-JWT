@@ -6,7 +6,6 @@ import com.softserve.itacademy.todolist.config.auth.LogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,18 +20,16 @@ public class SecurityAppFilterChain {
 
     private final AuthEntryPointJwt authEntryPointJwt;
     private final AuthTokenFilter authTokenFilter;
-    private final AuthenticationProvider authenticationProvider;
     private final LogoutService logoutService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authenticationProvider(authenticationProvider)
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/login", "/").permitAll()
                         .requestMatchers("/api/users/**").hasRole("USER")
                         .anyRequest().authenticated())
 
