@@ -1,6 +1,6 @@
 package com.softserve.itacademy.todolist.controller;
 
-import com.softserve.itacademy.todolist.dto.UserResponse;
+import com.softserve.itacademy.todolist.dto.user.UserResponseDto;
 import com.softserve.itacademy.todolist.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +18,9 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    List<UserResponse> getAll() {
+    List<UserResponseDto> getAll() {
         return userService.getAll().stream()
-                .map(UserResponse::new)
+                .map(UserResponseDto::new)
                 .collect(Collectors.toList());
     }
 }
