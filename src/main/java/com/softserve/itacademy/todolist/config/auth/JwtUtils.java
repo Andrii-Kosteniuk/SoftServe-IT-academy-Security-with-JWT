@@ -15,10 +15,12 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 
-    @Value("${myjwttoken.app.jwtSecret}")
+    @Value("${jwt.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${myjwttoken.app.jwtExpirationMs}")
+
+    //    @Value("${jwt.jwtExpiration_24H}")
+    @Value("${jwt.jwtExpiration_15_Sec}")
     private int jwtExpirationMs;
 
     public String generateTokenFromUserName(String username) {
@@ -30,7 +32,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token)  {
         try {
             Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return true;
@@ -58,6 +60,7 @@ public class JwtUtils {
                 .build()
                 .parseClaimsJws(token).getBody();
     }
+
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
