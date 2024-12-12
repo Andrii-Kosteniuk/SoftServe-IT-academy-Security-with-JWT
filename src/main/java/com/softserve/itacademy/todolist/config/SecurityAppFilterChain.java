@@ -29,7 +29,7 @@ public class SecurityAppFilterChain {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPointJwt))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/").permitAll()
+                        .requestMatchers("/auth/**", "/").permitAll()
                         .requestMatchers("/api/users/**").hasRole("USER")
                         .anyRequest().authenticated())
 
