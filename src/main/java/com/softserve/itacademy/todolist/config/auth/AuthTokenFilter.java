@@ -1,10 +1,12 @@
 package com.softserve.itacademy.todolist.config.auth;
 
+import com.softserve.itacademy.todolist.repository.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,12 +43,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     private boolean hasAuthorizationBearer(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         return ! ObjectUtils.isEmpty(authorizationHeader) && authorizationHeader.startsWith("Bearer");
     }
 
     private String getAccessToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         return authorizationHeader.substring(7);
     }
 
