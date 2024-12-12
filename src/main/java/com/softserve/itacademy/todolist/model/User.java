@@ -2,10 +2,7 @@ package com.softserve.itacademy.todolist.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,10 +13,13 @@ import java.util.List;
 
 @Data
 @Entity
+@Builder
 @Table(name = "users")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Pattern(regexp = "[A-Z][a-z]+",
@@ -36,15 +36,15 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Pattern(regexp = "[A-Za-z\\d]{6,}",
-            message = "Must be minimum 6 symbols long, using digits and latin letters")
-    @Pattern(regexp = ".*\\d.*",
-            message = "Must contain at least one digit")
-    @Pattern(regexp = ".*[A-Z].*",
-            message = "Must contain at least one uppercase letter")
-    @Pattern(regexp = ".*[a-z].*",
-            message = "Must contain at least one lowercase letter")
-    @Column(name = "password", nullable = false)
+//    @Pattern(regexp = "[A-Za-z\\d]{6,}",
+//            message = "Must be minimum 6 symbols long, using digits and latin letters")
+//    @Pattern(regexp = ".*\\d.*",
+//            message = "Must contain at least one digit")
+//    @Pattern(regexp = ".*[A-Z].*",
+//            message = "Must contain at least one uppercase letter")
+//    @Pattern(regexp = ".*[a-z].*",
+//            message = "Must contain at least one lowercase letter")
+//    @Column(name = "password", nullable = false)
     private String password;
 
     @ManyToOne
