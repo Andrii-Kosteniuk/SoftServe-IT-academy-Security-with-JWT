@@ -12,4 +12,5 @@ import org.springframework.stereotype.Component;
 public class AuthenticationResponse {
     private String username;
     private String token;
+    private String refreshToken;
 }
