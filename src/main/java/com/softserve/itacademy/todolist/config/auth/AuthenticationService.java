@@ -23,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -46,17 +47,25 @@ public class AuthenticationService {
         }
 
         User user = (User) authentication.getPrincipal();
+        String accessToken = jwtUtils.generateAccessTokenFromUserName(user.getUsername());
+        String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
+        Optional<Token> validTokenByUserId = tokenRepository.findValidTokenByUserId(user.getId());
+        if (validTokenByUserId.isEmpty()) {
+            saveUserToken(user, accessToken);
 
-        // ERROR
-        Token token = tokenRepository.findAllValidTokenByUserId(user.getId()).getFirst();
-        if (token == null) {
-            log.error("Token has been expired");
-            throw new BadCredentialsException("Your access token might be expired!\n You should refresh token!!!");
+            return AuthenticationResponse.builder()
+                    .username(user.getUsername())
+                    .message("Your access token was returned")
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
         }
 
-        String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
-
-        return new AuthenticationResponse(user.getUsername(), token.getName(), refreshToken);
+        return AuthenticationResponse.builder()
+                .username(user.getUsername())
+                .message("Your token has expired! You should refresh your token to get access to resources ")
+                .refreshToken(refreshToken)
+                .build();
 
     }
 
@@ -72,10 +81,10 @@ public class AuthenticationService {
 
         userRepository.save(user);
 
-        String jwtToken = jwtUtils.generateAccessTokenFromUserName(user.getUsername());
-        String refreshToken = jwtUtils.generateRefreshToken(user.getUsername());
-        saveUserToken(user, jwtToken);
-        return new AuthenticationResponse(user.getUsername(), jwtToken, refreshToken);
+        return AuthenticationResponse.builder()
+                .username(user.getUsername())
+                .message("New user has been registered. You have to log in to get access to resources!")
+                .build();
     }
 
     private void saveUserToken(User user, String jwtToken) {
@@ -93,7 +102,7 @@ public class AuthenticationService {
         String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authorizationHeader == null) {
+        if (authorizationHeader == null || ! authorizationHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authorizationHeader.substring(7);
@@ -102,26 +111,27 @@ public class AuthenticationService {
         User user = userRepository.findByEmail(userEmail).orElseThrow();
 
         if (jwtUtils.validateToken(refreshToken)) {
-            String token = jwtUtils.generateAccessTokenFromUserName(user.getUsername());
-            revokeAllUserTokens(user);
-            saveUserToken(user, token);
-            var authenticationResponse = new AuthenticationResponse(
-                    userEmail, token, refreshToken);
+            revokeUserToken(user);
+            var authenticationResponse = AuthenticationResponse.builder()
+                    .username(user.getUsername())
+                    .message("Your token was refreshed. You have to log in to get new access token")
+                    .build();
+
             new ObjectMapper().writeValue(response.getOutputStream(), authenticationResponse);
         }
 
-
     }
 
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUserId(user.getId());
-        if (validUserTokens.isEmpty())
+    private void revokeUserToken(User user) {
+        var validUserToken = tokenRepository.findValidTokenByUserId(user.getId());
+        if (validUserToken.isEmpty())
             return;
-        validUserTokens.forEach(t -> {
-                    t.setExpired(true);
-                    t.setRevoked(true);
-                }
-        );
-        tokenRepository.saveAll(validUserTokens);
+        validUserToken.ifPresent(token -> {
+            token.setExpired(true);
+            token.setRevoked(true);
+        });
+
+        tokenRepository.save(validUserToken.get());
     }
+
 }
